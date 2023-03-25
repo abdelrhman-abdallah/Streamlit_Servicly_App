@@ -1,0 +1,35 @@
+
+# sadly this doesn't work in the deployment enviroment but it works locally really well so i put the text file in the repo ^_^ 
+
+elif option == "Geodatabase":
+
+                # now we can use OGR2OGR commands to convert geopackage to geodatabase
+
+                # so we first convert the geoJson file into geopkg
+
+                inputasGDF.to_file(f"{filename}_geopkg.gpkg")
+
+                # then we use subprocess library so that we can write the ogr2ogr command
+
+                subprocess.call(f"ogr2ogr {filename}_as_gdb.gdb {filename}_geopkg.gpkg")
+
+                # as its a folder we still have to make a compressed file so that the files downloaded can be valid and correct
+
+                shutil.make_archive(f"{filename}","zip",f"{filename}_as_gdb.gdb")
+                
+                st.success("Converted to File GeoDataBase Successfully, Click to Download the Converted File!!!")
+
+                with open(f"{filename}.zip", "rb") as fileGDB:
+                    btn = st.download_button(
+                    label="Download File GeoDataBase",
+                    data=fileGDB,
+                    file_name=f"{filename}_as_gdb.zip",
+                    )  
+
+                # again one of the most important steps is to delete the gdb directory and the compressed file
+
+                # so that we don't create folders in vain and to avoid errors if the user upload the same file again
+
+                shutil.rmtree(f"{filename}_as_gdb.gdb")
+                os.remove(f"{filename}.zip")
+                os.remove(f"{filename}_geopkg.gpkg")
